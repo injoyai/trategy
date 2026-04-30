@@ -35,14 +35,14 @@ func (BullishAlignment) Signal(info extend.Info, dks, min extend.Klines) bool {
 
 	// 2. 判断均线多头排列 (MA5 > MA10 > MA20 > MA30) 且 均线向上 (当日 > 昨日)
 	// 且是刚刚变成多头排列 (昨日不是多头排列)
-	isCurrentBullish := ma5 > ma10 && ma10 > ma20 && ma20 > ma30
+	isCurrentBullish := (ma5 > ma10 || ma10 > ma5) && ma10 > ma20 && ma20 > ma30
 	isPrevBullish := prevMa5 > prevMa10 && prevMa10 > prevMa20 && prevMa20 > prevMa30
 
 	if !isCurrentBullish || isPrevBullish {
 		return false
 	}
 
-	if !(ma5 > prevMa5 && ma10 > prevMa10 && ma20 > prevMa20 && ma30 > prevMa30) {
+	if !(ma10 > prevMa10 && ma20 > prevMa20 && ma30 > prevMa30) {
 		return false
 	}
 

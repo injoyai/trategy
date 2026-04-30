@@ -113,6 +113,9 @@ func GetScreener(c fbr.Ctx) {
 
 	items, err := screener.Run(req)
 	c.CheckErr(err)
+	if items == nil {
+		items = []screener.Item{}
+	}
 	c.Succ(items)
 }
 

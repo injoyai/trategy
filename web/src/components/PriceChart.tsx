@@ -51,6 +51,10 @@ export default function PriceChart({ candles, trades, equity, signals, showBuy =
     }
     return { mid, up, low }
   }
+  const sma5 = sma(5)
+  const sma10 = sma(10)
+  const sma20 = sma(20)
+  const sma30 = sma(30)
   const buyPts = (trades || [])
     .filter(t => t.side === 'buy' && t.index >= 0 && t.index < closes.length)
     .map(t => ({
@@ -164,10 +168,10 @@ export default function PriceChart({ candles, trades, equity, signals, showBuy =
   const priceSeries: any[] = [
     { type: 'candlestick', name: 'K线', data: ohlc, itemStyle: { color: '#f5222d', color0: '#52c41a', borderColor: '#f5222d', borderColor0: '#52c41a' }, markLine: { symbol: ['none','none'], silent: true, data: [...(showBuy ? buyLines : []), ...(showSell ? sellLines : [])] } },
     ...(showMA ? [
-      { type: 'line', name: 'SMA5', data: sma(5), smooth: true, showSymbol: false },
-      { type: 'line', name: 'SMA10', data: sma(10), smooth: true, showSymbol: false },
-      { type: 'line', name: 'SMA20', data: sma(20), smooth: true, showSymbol: false },
-      { type: 'line', name: 'SMA30', data: sma(30), smooth: true, showSymbol: false },
+      { type: 'line', name: 'SMA5', data: sma5, smooth: true, showSymbol: false },
+      { type: 'line', name: 'SMA10', data: sma10, smooth: true, showSymbol: false },
+      { type: 'line', name: 'SMA20', data: sma20, smooth: true, showSymbol: false },
+      { type: 'line', name: 'SMA30', data: sma30, smooth: true, showSymbol: false },
     ] : []),
     ...(showBollinger ? [
       { type: 'line', name: '布林中轨', data: mid, smooth: true, showSymbol: false } as any,
@@ -218,6 +222,16 @@ export default function PriceChart({ candles, trades, equity, signals, showBuy =
         lines.push(`最低：${low} 元`)
         lines.push(`成交量：${fmtWanYi(vols[idx], '手', '万手', '亿手')}`)
         if (typeof c.Amount === 'number') lines.push(`成交额：${fmtWanYi(c.Amount, '元', '万元', '亿元')}`)
+        if (showMA) {
+          lines.push('<div style="border-top:1px solid rgba(0,0,0,0.2); margin:4px 0 2px;"></div>')
+          const pushMA = (label: string, v: number) => {
+            if (Number.isFinite(v)) lines.push(`${label}：${v.toFixed(2)} 元`)
+          }
+          pushMA('SMA5', sma5[idx])
+          pushMA('SMA10', sma10[idx])
+          pushMA('SMA20', sma20[idx])
+          pushMA('SMA30', sma30[idx])
+        }
         return lines.join('<br/>')
       }
     },
